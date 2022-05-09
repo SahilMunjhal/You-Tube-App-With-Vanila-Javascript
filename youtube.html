@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You-Tube</title>
+
+    <style>
+      #navbar
+      {
+          margin:30px 70px;
+          display: flex;
+      }
+      #button
+      {
+          background-color: black;
+          color: white;
+          height: 40px;
+          width: 90px;
+          margin-top: 40px;
+      }
+      #search
+      {
+        height: 30px;
+        width: 190px; 
+        margin-top: 40px;
+        margin-right: 20px;
+      }
+      #logo
+      {
+          height: 100px;
+          width: 300px;
+          margin-right: 200px;
+      }
+      #display
+      {
+          display: grid;
+          grid-template-columns: repeat(4,1fr);
+          grid-template-rows: 200px;
+      }
+    </style>
+</head>
+<body>
+    <div id="container">
+       <div id="navbar">
+          <img id="logo" src="https://cdn.mos.cms.futurecdn.net/8gzcr6RpGStvZFA2qRt4v6.jpg">
+          <input id="search" placeholder="Search" type="text">
+          <button id="button" onclick="searchvideos()" >search</button>
+       </div>
+       <div id="display">
+          
+       </div>
+    </div>
+</body>
+</html>
+
+<script>
+    let display=document.querySelector("#display");
+    
+    async function trending()
+  {
+    try{
+        let response=await fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&chart=mostPopular&type=video&key=AIzaSyCrxY7xldyH2NeZKXMfH2FZtkEAJYAVpJU&maxResults=20&regionCode=IN&kind=youtube#videoListResponse'
+`);
+        let data=await response.json();
+        let videos=data.items;
+
+        console.log("data",videos);
+        showVideos(videos);
+      }catch(err)
+      {
+          console.log(err);
+      }
+  }
+
+  trending();
+   
+ async  function searchvideos()
+    {
+      try{
+        let input=document.querySelector("#search").value;
+        let response=await fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${input}&type=video&key=AIzaSyCrxY7xldyH2NeZKXMfH2FZtkEAJYAVpJU&maxResults=20&regionCode=IN`);
+        let data=await response.json();
+        let videos=data.items;
+
+        console.log("data",videos);
+        showVideos(videos);
+      }catch(err)
+      {
+          console.log(err);
+      }
+        
+    }
+
+    showVideos= (item) =>{
+        display.innerHTML="";
+        item.forEach((element)=>{
+        let{snippet,id:{videoId}}=element;
+        let div=document.createElement("div");
+        let title=document.createElement("p");
+        title.innerText=snippet.title;
+        let thumbnails=document.createElement("img");
+        thumbnails.src=snippet.thumbnails.medium.url;    
+
+        div.append(thumbnails,title);
+        div.addEventListener("click",()=>{
+          dataStored={
+            snippet,
+            videoId
+          }
+          localStorage.setItem("recommendations",JSON.stringify(item));
+          localStorage.setItem("videoData",JSON.stringify(dataStored));
+          window.location.href="video.html";
+        })
+        display.append(div);
+        });
+    }
+
+    // let url2=`https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&regionCode=IN&key=AIzaSyCrxY7xldyH2NeZKXMfH2FZtkEAJYAVpJU&maxResults=50`
+
+</script>

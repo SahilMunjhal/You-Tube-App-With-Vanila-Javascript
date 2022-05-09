@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youtube-Video</title>
+</head>
+<style>
+     #navbar
+      {
+          margin:30px 70px;
+          display: flex;
+      }
+      #button
+      {
+          background-color: black;
+          color: white;
+          height: 40px;
+          width: 90px;
+          margin-top: 40px;
+      }
+      #search
+      {
+        height: 30px;
+        width: 190px; 
+        margin-top: 40px;
+        margin-right: 20px;
+      }
+      #logo
+      {
+          height: 100px;
+          width: 300px;
+          margin-right: 200px;
+      }
+      #display{
+          display: flex;
+          height: 600px;
+          gap: 30px;
+      }
+      #video{
+          flex: 3;
+          border: 1px solid black;
+          height: 400px;
+      }
+      #recommendations{
+          flex: 1;
+          border: 1px solid red;
+          overflow: scroll;
+      }
+      #div{
+          height: 190px;
+          width: 100%;
+          margin-bottom: 50px;
+      }
+</style>
+<body>
+    <div id="container">
+        <div id="navbar">
+           <img id="logo" src="https://cdn.mos.cms.futurecdn.net/8gzcr6RpGStvZFA2qRt4v6.jpg">
+           <input id="search" placeholder="Search" type="text">
+           <button id="button" onclick="searchvideos()" >search</button>
+        </div>
+        <div id="display">
+           <div id="video"></div>
+           <div id="recommendations">
+               
+
+           </div>
+        </div>
+     </div> 
+</body>
+</html>
+
+<script>
+    let {videoId}=JSON.parse(localStorage.getItem("videoData"));
+    let recomData=JSON.parse(localStorage.getItem("recommendations"));
+    let video=document.querySelector("#video");
+    let recommendations=document.querySelector("#recommendations");
+    videodata(videoId);
+    function videodata(videoId)
+    {
+        video.innerHTML=null;
+        let iframe=document.createElement("iframe");
+        iframe.width="100%"
+        iframe.height="100%" 
+        iframe.src=`https://www.youtube.com/embed/${videoId}` 
+        iframe.setAttribute("allowfullscreen","true")
+
+        video.append(iframe);
+    }
+    
+
+    recomData.forEach((element) =>{
+        let{snippet,id:{videoId}}=element;
+        let div=document.createElement("div");
+        let title=document.createElement("p");
+        title.innerText=snippet.title;
+        let thumbnails=document.createElement("img");
+        thumbnails.src=snippet.thumbnails.medium.url;
+        console.log(videoId)
+        div.addEventListener("click",function(element){
+            console.log(element)
+            videodata(videoId);
+        })
+
+        div.id="div"
+        div.append(thumbnails,title)
+        div.addEventListener("click",function(element){
+            console.log(element)
+            videodata(videoId);
+        })
+        recommendations.append(div);
+    })
+
+
+</script>
